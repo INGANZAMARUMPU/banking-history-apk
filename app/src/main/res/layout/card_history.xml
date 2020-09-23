@@ -22,13 +22,14 @@
                     android:orientation="vertical"
                     android:layout_weight="2">
                     <TextView
+                        android:id="@+id/lbl_hist_date"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/lbl_hist_product"
                         android:text="le 30 fevrier 2020"
                         android:textColor="#000"
                         android:textSize="8pt"/>
                     <TextView
+                        android:id="@+id/lbl_hist_motif"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="amahera ya minerval 3 trim Guy Michel"
@@ -40,17 +41,19 @@
                     android:orientation="vertical"
                     android:layout_weight="1">
                     <TextView
+                        android:id="@+id/lbl_hist_montant"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="-120 000 Fbu"
                         android:textSize="6pt"
-                        android:textColor="#000"/>
+                        android:textColor="#000"
+                        android:textStyle="bold"/>
                     <TextView
+                        android:id="@+id/lbl_hist_solde"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="135 400 Fbu"
                         android:textSize="6pt"
-                        android:textStyle="bold"
                         android:textColor="#000"/>
                 </LinearLayout>
             </LinearLayout>

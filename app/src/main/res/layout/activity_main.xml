@@ -21,13 +21,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:padding="10dp">
+        android:layout_marginTop="?attr/actionBarSize">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="10dp">
+            android:padding="10dp">
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -41,7 +40,7 @@
                     android:id="@+id/lbl_main_acc_num"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="05546576"
+                    android:text="000000"
                     android:textStyle="bold"/>
             </LinearLayout>
             <LinearLayout
@@ -57,7 +56,7 @@
                     android:id="@+id/lbl_main_acc_mount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="134600"
+                    android:text="000 000"
                     android:textStyle="bold"/>
             </LinearLayout>
         </LinearLayout>
