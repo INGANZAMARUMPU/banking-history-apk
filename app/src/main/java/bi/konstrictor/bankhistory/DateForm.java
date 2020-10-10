@@ -6,9 +6,9 @@ import android.view.View;
 
 public class DateForm extends Dialog {
 
-    private final Activity context;
+    private final MainActivity context;
 
-    public DateForm(Activity context) {
+    public DateForm(MainActivity context) {
         super(context, R.style.Theme_AppCompat_DayNight_Dialog);
         setContentView(R.layout.form_filter_date);
         this.context = context;
