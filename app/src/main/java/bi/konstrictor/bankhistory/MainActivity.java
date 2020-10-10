@@ -193,9 +193,13 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_date) {
+            DateForm date_form = new DateForm(this);
+            date_form.show();
         }else if(id == R.id.action_logout){
             Host.logOut(this);
         }else if(id == R.id.action_operation){
+            ActionsForm action_form = new ActionsForm(this);
+            action_form.show();
         }
         return super.onOptionsItemSelected(item);
     }
