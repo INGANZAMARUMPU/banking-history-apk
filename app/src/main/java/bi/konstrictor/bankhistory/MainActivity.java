@@ -1,6 +1,7 @@
 package bi.konstrictor.bankhistory;
 
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,8 +18,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Calendar;
+import java.util.Date;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -35,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Action> actions;
     private String account_number;
     private AdaptateurAction adaptateur;
+    private boolean retrait = true, depot = true;
+    private long date_de = 1577884268/* 01 jan 2020 */, date_a = System.currentTimeMillis()/1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,17 +116,23 @@ public class MainActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     if(!refreshed) {
                         Host.refreshToken(MainActivity.this);
-                        getActions(true);
+                        MainActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                getActions(true);
+                            }
+                        });
+                    }else {
+                        final String message = e.getMessage();
+                        Log.i("==== MAIN ACTIVITY ====", e.getMessage());
+                        e.printStackTrace();
+                        MainActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MainActivity.this, "Erreur de chargement de votre historique", Toast.LENGTH_LONG).show();
+                            }
+                        });
                     }
-                    final String message = e.getMessage();
-                    Log.i("==== MAIN ACTIVITY ====", e.getMessage());
-                    e.printStackTrace();
-                    MainActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(MainActivity.this, "Erreur de chargement de votre historique", Toast.LENGTH_LONG).show();
-                        }
-                    });
                 }
             }
         });
@@ -202,5 +214,66 @@ public class MainActivity extends AppCompatActivity {
             action_form.show();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public boolean isRetrait() {
+        return retrait;
+    }
+
+    public void setRetrait(boolean retrait) {
+        this.retrait = retrait;
+    }
+
+    public boolean isDepot() {
+        return depot;
+    }
+
+    public void setDepot(boolean depot) {
+        this.depot = depot;
+    }
+
+    public long getDate_de() {
+        return date_de;
+    }
+
+    public void setDate_de(long date_de) {
+        this.date_de = date_de;
+    }
+
+    public long getDate_a() {
+        return date_a;
+    }
+
+    public void setDate_a(long date_a) {
+        this.date_a = date_a;
+    }
+
+    public void filter(){
+        this.retrait = retrait;
+        this.depot = depot;
+        ArrayList<Action> filtered_actions = new ArrayList<>();
+        ArrayList<Action> displayed_actions = adaptateur.getActions();
+
+        if(this.retrait == this.depot){
+            filtered_actions.addAll(actions);
+        }else if (this.retrait) {
+            for (Action action : displayed_actions){
+                if (action.is_retrait & (action.getTime()>=date_de) & (action.getTime()<=date_a)){
+                    filtered_actions.add(action);
+                }
+            }
+        }else {
+            for (Action action : displayed_actions) {
+                if(!action.is_retrait & (action.getTime()>=date_de) & (action.getTime()<=date_a)){
+                    filtered_actions.add(action);
+                }
+            }
+        }
+        adaptateur.setActions(filtered_actions);
+        adaptateur.notifyDataSetChanged();
+    }
+    public void refresh(){
+        adaptateur.setActions(actions);
+        adaptateur.notifyDataSetChanged();
     }
 }

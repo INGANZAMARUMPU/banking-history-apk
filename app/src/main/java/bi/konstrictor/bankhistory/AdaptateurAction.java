@@ -14,9 +14,16 @@ public class AdaptateurAction extends RecyclerView.Adapter<AdaptateurAction.View
     private MainActivity context;
     private ArrayList<Action> actions;
 
-    public AdaptateurAction(MainActivity context, ArrayList<Action> actions) {
+    AdaptateurAction(MainActivity context, ArrayList<Action> actions) {
         this.context = context;
         this.actions = actions;
+    }
+    public void setActions(ArrayList<Action> actions){
+        this.actions = actions;
+    }
+
+    public ArrayList<Action> getActions() {
+        return actions;
     }
 
     @Override
@@ -28,7 +35,7 @@ public class AdaptateurAction extends RecyclerView.Adapter<AdaptateurAction.View
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         Action action = actions.get(position);
-        holder.lbl_hist_date.setText(action.date);
+        holder.lbl_hist_date.setText(action.str_date);
         holder.lbl_hist_montant.setText(action.montant);
         holder.lbl_hist_solde.setText(action.solde);
         holder.lbl_hist_motif.setText(action.motif);
