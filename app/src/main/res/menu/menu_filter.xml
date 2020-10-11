@@ -2,15 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_date"
-        android:icon="@drawable/ic_calendar"
-        android:title="Date"
-        app:showAsAction="always"/>
-
-    <item
-        android:id="@+id/action_operation"
-        android:icon="@drawable/ic_operation"
-        android:title="Operation"
+        android:id="@+id/action_filter"
+        android:icon="@drawable/ic_filter"
+        android:title="Filter"
         app:showAsAction="always"/>
     <item
         android:id="@+id/action_logout"

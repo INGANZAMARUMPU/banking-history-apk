@@ -211,14 +211,11 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_date) {
-            DateForm date_form = new DateForm(this);
-            date_form.show();
+        if (id == R.id.action_filter) {
+            FilterForm filter_form = new FilterForm(this);
+            filter_form.show();
         }else if(id == R.id.action_logout){
             Host.logOut(this);
-        }else if(id == R.id.action_operation){
-            ActionsForm action_form = new ActionsForm(this);
-            action_form.show();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -255,37 +252,27 @@ public class MainActivity extends AppCompatActivity {
         this.date_a = date_a;
     }
 
-    public void filterMovment(){
+    public void performFilter(){
         ArrayList<Action> filtered_actions = new ArrayList<>();
-        ArrayList<Action> displayed_actions = adaptateur.getActions();
-
-        if(this.retrait == this.depot){
-            filtered_actions.addAll(actions);
+        ArrayList<Action> in_date_actions = new ArrayList<>();
+        for (Action action : actions){
+            if ((action.getTime()>=date_de) & (action.getTime()<=date_a)){
+                in_date_actions.add(action);
+            }
+        }
+        if((in_date_actions.size() == 0)|(this.retrait == this.depot)){
+            filtered_actions.addAll(in_date_actions);
         }else if (this.retrait) {
-            for (Action action : displayed_actions){
+            for (Action action : in_date_actions){
                 if (action.is_retrait){
                     filtered_actions.add(action);
                 }
             }
         }else {
-            for (Action action : displayed_actions) {
+            for (Action action : in_date_actions) {
                 if(!action.is_retrait){
                     filtered_actions.add(action);
                 }
-            }
-        }
-        adaptateur.setActions(filtered_actions);
-        adaptateur.notifyDataSetChanged();
-    }
-    public void filterDate(){
-        ArrayList<Action> filtered_actions = new ArrayList<>();
-        ArrayList<Action> displayed_actions = adaptateur.getActions();
-        for (Action action : displayed_actions){
-            Log.i("==== DATE ====", date_de+" "+date_a+" "+action.getTime());
-            Log.i("==== DATE ====", Boolean.toString(action.getTime()>=date_de));
-            Log.i("==== DATE ====", Boolean.toString(action.getTime()<=date_a));
-            if ((action.getTime()>=date_de) & (action.getTime()<=date_a)){
-                filtered_actions.add(action);
             }
         }
         adaptateur.setActions(filtered_actions);
