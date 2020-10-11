@@ -1,7 +1,6 @@
 package bi.konstrictor.bankhistory;
 
 import android.os.Bundle;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,16 +12,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -39,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Action> actions;
     private String account_number;
     private AdaptateurAction adaptateur;
+    SwipeRefreshLayout swipe_main_refresh;
     private boolean retrait = true, depot = true;
     private long date_de = 1577884268/* 01 jan 2020 */, date_a = System.currentTimeMillis()/1000;
 
@@ -54,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         lbl_main_acc_num = findViewById(R.id.lbl_main_acc_num);
         lbl_main_acc_mount = findViewById(R.id.lbl_main_acc_mount);
         recycler_operations = findViewById(R.id.recycler_operations);
+        swipe_main_refresh = findViewById(R.id.swipe_main_refresh);
 
         recycler_operations.setLayoutManager(new GridLayoutManager(this, 1));
         recycler_operations.addItemDecoration(new DividerItemDecoration(recycler_operations.getContext(), DividerItemDecoration.VERTICAL));
@@ -68,9 +66,16 @@ public class MainActivity extends AppCompatActivity {
         }
         getAccountInfo(false);
         getActions(false);
+        swipe_main_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getActions(false);
+            }
+        });
     }
 
     private void getActions(final boolean refreshed) {
+        actions.clear();
         OkHttpClient client = new OkHttpClient();
         HttpUrl.Builder urlBuilder = HttpUrl.parse(Host.URL+"/action/myactions").newBuilder();
         String url = urlBuilder.build().toString();
@@ -78,13 +83,13 @@ public class MainActivity extends AppCompatActivity {
                 .url(url)
                 .addHeader("Authorization", "Bearer " + Host.getSessionValue(this, "token"))
                 .get().build();
-        Log.i("==== MAINACTIVITY ====", request.toString());
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 MainActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        swipe_main_refresh.setRefreshing(false);
                         Toast.makeText(MainActivity.this, "Erreur de Connexion", Toast.LENGTH_LONG).show();
                     }
                 });
@@ -109,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
                     MainActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            swipe_main_refresh.setRefreshing(false);
                             adaptateur.notifyDataSetChanged();
                         }
                     });
@@ -129,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
                         MainActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                swipe_main_refresh.setRefreshing(false);
                                 Toast.makeText(MainActivity.this, "Erreur de chargement de votre historique", Toast.LENGTH_LONG).show();
                             }
                         });
@@ -248,9 +255,7 @@ public class MainActivity extends AppCompatActivity {
         this.date_a = date_a;
     }
 
-    public void filter(){
-        this.retrait = retrait;
-        this.depot = depot;
+    public void filterMovment(){
         ArrayList<Action> filtered_actions = new ArrayList<>();
         ArrayList<Action> displayed_actions = adaptateur.getActions();
 
@@ -258,15 +263,29 @@ public class MainActivity extends AppCompatActivity {
             filtered_actions.addAll(actions);
         }else if (this.retrait) {
             for (Action action : displayed_actions){
-                if (action.is_retrait & (action.getTime()>=date_de) & (action.getTime()<=date_a)){
+                if (action.is_retrait){
                     filtered_actions.add(action);
                 }
             }
         }else {
             for (Action action : displayed_actions) {
-                if(!action.is_retrait & (action.getTime()>=date_de) & (action.getTime()<=date_a)){
+                if(!action.is_retrait){
                     filtered_actions.add(action);
                 }
+            }
+        }
+        adaptateur.setActions(filtered_actions);
+        adaptateur.notifyDataSetChanged();
+    }
+    public void filterDate(){
+        ArrayList<Action> filtered_actions = new ArrayList<>();
+        ArrayList<Action> displayed_actions = adaptateur.getActions();
+        for (Action action : displayed_actions){
+            Log.i("==== DATE ====", date_de+" "+date_a+" "+action.getTime());
+            Log.i("==== DATE ====", Boolean.toString(action.getTime()>=date_de));
+            Log.i("==== DATE ====", Boolean.toString(action.getTime()<=date_a));
+            if ((action.getTime()>=date_de) & (action.getTime()<=date_a)){
+                filtered_actions.add(action);
             }
         }
         adaptateur.setActions(filtered_actions);

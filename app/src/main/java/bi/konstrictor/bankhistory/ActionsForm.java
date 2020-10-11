@@ -40,7 +40,7 @@ public class ActionsForm extends Dialog {
     private void submit() {
         context.setRetrait(check_retraits.isChecked());
         context.setDepot(check_depots.isChecked());
-        context.filter();
+        context.filterMovment();
         dismiss();
     }
 }

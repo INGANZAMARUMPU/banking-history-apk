@@ -42,6 +42,6 @@ public class Action {
     }
 
     public long getTime() {
-        return date.getTime()/1000;
+        return date.getTime();
     }
 }

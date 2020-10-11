@@ -44,17 +44,16 @@ public class DateForm extends Dialog {
     private void submit() {
         context.setDate_de(getTimestamp(date_picker_du));
         context.setDate_a(getTimestamp(date_picker_au));
-        context.filter();
+        context.filterDate();
     }
     private long getTimestamp(DatePicker date_picker){
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, date_picker_au.getYear());
-        calendar.set(Calendar.MONTH, date_picker_au.getMonth());
-        calendar.set(Calendar.DAY_OF_MONTH, date_picker_au.getDayOfMonth());
+        calendar.set(Calendar.YEAR, date_picker.getYear());
+        calendar.set(Calendar.MONTH, date_picker.getMonth());
+        calendar.set(Calendar.DAY_OF_MONTH, date_picker.getDayOfMonth());
         calendar.set(Calendar.HOUR_OF_DAY, 23);
         calendar.set(Calendar.MINUTE, 59);
         calendar.set(Calendar.SECOND, 0);
-        long timestamp = calendar.getTimeInMillis();
-        return  timestamp;
+        return calendar.getTimeInMillis();
     }
 }
